@@ -1,6 +1,6 @@
 
 .container {
-    width: 480px;
+    width: 960px;
     min-height: 400px;
     margin: 0 auto;
     border: 3px dashed orange;
@@ -35,7 +35,7 @@ ol.none { list-style-type: none; }
 
 /* list-style-position */
 .inside, .outside {
-    list-style-image: url(../img/food.png);
+    /* list-style-image: url(../img/food.png); */
 }
 
 .inside { list-style-position: inside; }
@@ -47,5 +47,15 @@ ol.none { list-style-type: none; }
 
 
 
+.food li {
+    list-style-type: none;
+    position: relative;
+    line-height: 30px;
+}
 
-
+.food li::before {
+    content: url('../img/food.png');
+    position: absolute;
+    left: -30px;
+    top: 3px;
+}
