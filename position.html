@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>위도 경도 구하기</title>
+</head>
+<body>
+
+<p id="location"></p>
+
+<script>
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+  var latitude = position.coords.latitude;
+  var longitude = position.coords.longitude;
+//   document.getElementById("location").innerHTML = "위도: " + latitude + "<br>경도: " + longitude;
+}
+
+// 위치 정보 요청
+getLocation();
+</script>
+
+</body>
+</html>

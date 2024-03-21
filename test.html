@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>카카오 지도</title>
     <style>
+
+        .container {
+            width: 800px;
+            margin: 100px auto;
+        }
+        input { 
+            width: calc(100% - 10px);
+            height: 40px; 
+            font-size: 20px;
+        }
         .my-place {
             padding: 12px 24px;
             background-color: cornflowerblue;
@@ -13,17 +23,44 @@
             color: white;
             font-size: 20px;
         }
+
+        .input-box {
+            display: flex;
+            flex-direction: column;
+            margin: 40px auto;
+        }
+
+        .btn {
+            border: none;
+            background-color: cornflowerblue;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <!-- 지도 영역 -->
-    <div id="map" style="width:800px;height:500px; margin: 0 auto;"></div>
-    <div id="roadview" style="width:800px;height:400px; margin: 0 auto;"></div>
+    <div class="container">
+        <div class="input-box">
+            <input type="text" name="name" id="name" placeholder="위치 이름">
+            <input type="text" name="address" id="address" placeholder="주소 입력">
+            <button id="btn" class="btn">검색</button>
+        </div>
+        <div id="map" style="width:800px;height:500px; margin: 0 auto;"></div>
+        <div id="roadview" style="width:800px;height:400px; margin: 0 auto;"></div>
+        <p id="position"></p>
+    </div>
 
-    <p id="position"></p>
+
 
     <!-- 카카오맵 API -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4d9c4ccd55af22e749af292453ba1fa9"></script>
+    <!-- 기본 script -->
+    <!-- <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4d9c4ccd55af22e749af292453ba1fa9"></script> -->
+
+    <!-- libraries script -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4d9c4ccd55af22e749af292453ba1fa9&libraries=services"></script>
 
     <script>
 
@@ -117,8 +154,71 @@
 
 
         
-        
+    </script>
+    <script>
 
+        // ==================================================================
+        // 주소-좌표 변환 객체를 생성합니다
+        var geocoder = new kakao.maps.services.Geocoder();
+
+        function searchAddress(name, address) {
+
+            // 주소로 좌표를 검색합니다
+            // address sample : '제주특별자치도 제주시 첨단로 242'
+            geocoder.addressSearch(address, function(result, status) {
+
+                // 정상적으로 검색이 완료됐으면 
+                if (status === kakao.maps.services.Status.OK) {
+
+                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                    // 결과값으로 받은 위치를 마커로 표시합니다
+                    var marker = new kakao.maps.Marker({
+                        map: map,
+                        position: coords
+                    });
+
+                    // 커스텀 오버레이를 생성하고 지도에 표시한다
+                    var customOverlay = new kakao.maps.CustomOverlay({
+                        map: map,
+                        content: `<div class="my-place">${name}</div>`, 
+                        position: new kakao.maps.LatLng(lat, lon), // 커스텀 오버레이를 표시할 좌표
+                        xAnchor: 0.5, // 컨텐츠의 x 위치
+                        yAnchor: 0 // 컨텐츠의 y 위치
+                    });
+
+                    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                    map.setCenter(coords);
+                } 
+            });    
+
+        }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const $address = document.getElementById('address')
+            
+            $address.addEventListener('keyup', function(event) {
+                const $name = document.getElementById('name')
+                const name = $name.value
+                const value = $address.value
+                if( event.keyCode == '13' ){
+                    searchAddress(name, value)
+                }
+            })
+
+            const $btn = document.getElementById('btn')
+
+            $btn.addEventListener('click', function() {
+                const $name = document.getElementById('name')
+                const $address = document.getElementById('address')
+                const name = $name.value
+                const value = $address.value
+                searchAddress(name, value)
+            })
+
+        })
     </script>
 </body>
 </html>
